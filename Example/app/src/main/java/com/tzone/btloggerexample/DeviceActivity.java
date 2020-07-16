@@ -50,7 +50,7 @@ public class DeviceActivity extends AppCompatActivity {
         setContentView(R.layout.activity_device);
 
         txtPrintLog = (TextView)findViewById(R.id.txtPrintLog);
-
+        
         try {
             String json = this.getIntent().getExtras().getString("d");
             ShowLog("Json:" + json);

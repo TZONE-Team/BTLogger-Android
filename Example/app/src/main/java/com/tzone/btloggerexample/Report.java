@@ -156,7 +156,7 @@ public class Report {
         LoggingInterval = 0;
         StartDelay = 0;
         StartMode = 0;
-        RecordStatus = DeviceRecordType.Initialize;
+        RecordStatus = DeviceRecordType.Unknown;
         Description = null;
 
         BeginTime = 0;
@@ -428,7 +428,7 @@ public class Report {
                             if (data.getTemperature() != -1000) {
                                 boolean flag = false;
                                 if (alarm.L_Enable) {
-                                    if (data.getTemperature() <= alarm.L) {
+                                    if (data.getTemperature() < alarm.L) {
                                         flag = true;
                                         if(data.getDataTypeID() == LoggingData.DataType.Mark || data.getDataTypeID() == LoggingData.DataType.MarkAlarm)
                                             data.setDataTypeID(LoggingData.DataType.MarkAlarm);
@@ -437,7 +437,7 @@ public class Report {
                                     }
                                 }
                                 if (alarm.H_Enable) {
-                                    if (data.getTemperature() >= alarm.H) {
+                                    if (data.getTemperature() > alarm.H) {
                                         flag = true;
                                         if(data.getDataTypeID() == LoggingData.DataType.Mark || data.getDataTypeID() == LoggingData.DataType.MarkAlarm)
                                             data.setDataTypeID(LoggingData.DataType.MarkAlarm);

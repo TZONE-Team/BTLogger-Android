@@ -75,8 +75,12 @@ public class DeviceActivity extends AppCompatActivity {
             return;
         try {
             if (_DataManager == null) {
-                if (_Device.getDeviceType() == DeviceType.TempU06)
-                    _DataManager = new com.tzone.bt.u06.DataManager();
+                if (_Device.getDeviceType() == DeviceType.TempU06L60)
+                    _DataManager = new com.tzone.bt.u06L60.DataManager();
+                else if (_Device.getDeviceType() == DeviceType.TempU06L100)
+                    _DataManager = new com.tzone.bt.u06L100.DataManager();
+                else if (_Device.getDeviceType() == DeviceType.TempU06L200)
+                    _DataManager = new com.tzone.bt.u06L200.DataManager();
                 else if (_Device.getDeviceType() == DeviceType.BT04)
                     _DataManager = new com.tzone.bt.bt04.DataManager();
                 else if (_Device.getDeviceType() == DeviceType.BT04B)
@@ -94,7 +98,9 @@ public class DeviceActivity extends AppCompatActivity {
             _Report = null;
 
             ShowLog("2、InitDataManager");
-            if (_Device.getDeviceType() == DeviceType.TempU06) {
+            if (_Device.getDeviceType() == DeviceType.TempU06L60
+                || _Device.getDeviceType() == DeviceType.TempU06L100
+                || _Device.getDeviceType() == DeviceType.TempU06L200) {
                 ShowLog("3、Notify");
                 _DataManager.Notify();
             }else {

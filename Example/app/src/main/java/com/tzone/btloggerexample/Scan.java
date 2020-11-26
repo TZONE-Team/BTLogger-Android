@@ -128,8 +128,42 @@ public class Scan extends BaseDevice {
                     return true;
                 }
             } else */
-            if (getDeviceType() == DeviceType.TempU06) {
-                com.tzone.bt.u06.Device u06 = new com.tzone.bt.u06.Device();
+            if (getDeviceType() == DeviceType.TempU06L60) {
+                com.tzone.bt.u06L60.Device u06 = new com.tzone.bt.u06L60.Device();
+                if (u06.fromBroadcast(bleDevice)) {
+                    this.ID = u06.getID();
+                    this.Name = u06.getName();
+                    this.Voltage = u06.getVoltage();
+                    this.TemperatureUnitTypeID = u06.getTemperatureUnitTypeID();
+                    this.Temperature = u06.getTemperature();
+                    this.Humidity = u06.getHumidity();
+                    this.Locklevel = u06.getLocklevel();
+                    this.RecordStatus = u06.getRecordStatus();
+                    this.AlarmStatus = u06.getAlarmStatus();
+                    this.DeviceStatus = new int[]{u06.getUSBPlugIn() ? 1 : 0, u06.getDataFull() ? 1 : 0};
+                    this.Version = u06.getVersion();
+                    this.LastActiveTime = new Date().getTime();
+                    return true;
+                }
+            }else if (getDeviceType() == DeviceType.TempU06L100) {
+                com.tzone.bt.u06L100.Device u06 = new com.tzone.bt.u06L100.Device();
+                if (u06.fromBroadcast(bleDevice)) {
+                    this.ID = u06.getID();
+                    this.Name = u06.getName();
+                    this.Voltage = u06.getVoltage();
+                    this.TemperatureUnitTypeID = u06.getTemperatureUnitTypeID();
+                    this.Temperature = u06.getTemperature();
+                    this.Humidity = u06.getHumidity();
+                    this.Locklevel = u06.getLocklevel();
+                    this.RecordStatus = u06.getRecordStatus();
+                    this.AlarmStatus = u06.getAlarmStatus();
+                    this.DeviceStatus = new int[]{u06.getUSBPlugIn() ? 1 : 0, u06.getDataFull() ? 1 : 0};
+                    this.Version = u06.getVersion();
+                    this.LastActiveTime = new Date().getTime();
+                    return true;
+                }
+            }else if (getDeviceType() == DeviceType.TempU06L200) {
+                com.tzone.bt.u06L200.Device u06 = new com.tzone.bt.u06L200.Device();
                 if (u06.fromBroadcast(bleDevice)) {
                     this.ID = u06.getID();
                     this.Name = u06.getName();

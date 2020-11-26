@@ -252,7 +252,9 @@ public class Report {
             if (totalHumidity_count > 0)
                 this.H_Average = Double.parseDouble(StringUtil.ToString(totalHumidity / totalHumidity_count, 1));
 
-            if(this.DeviceTypeID == DeviceType.TempU06){
+            if(this.DeviceTypeID == DeviceType.TempU06L60
+                    || this.DeviceTypeID == DeviceType.TempU06L100
+                    || this.DeviceTypeID == DeviceType.TempU06L200){
                 if(this.AlarmList != null && this.AlarmList.size() > 0){
                     AlarmSetting alarmSetting = this.AlarmList.get(0);
                     if(alarmSetting.getH_Enable() && alarmSetting.getH() != -1000){

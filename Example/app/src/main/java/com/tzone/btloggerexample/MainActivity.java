@@ -1,256 +1,150 @@
 package com.tzone.btloggerexample;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
 import android.Manifest;
 import android.app.ListActivity;
+import android.bluetooth.BluetoothAdapter;
+import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.provider.Settings;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.alibaba.fastjson.JSON;
+import com.tzone.AppInfo;
 import com.tzone.bluetooth.BleManager;
-import com.tzone.bluetooth.callback.BleScanCallback;
-import com.tzone.bluetooth.data.BleDevice;
-import com.tzone.bluetooth.data.BleScanState;
-import com.tzone.bluetooth.scan.BleScanRuleConfig;
-import com.tzone.bt.BaseDevice;
-import com.tzone.bt.ConfigManagerBase;
-import com.tzone.bt.DeviceType;
 
-import java.util.Date;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class MainActivity extends ListActivity {
+public class MainActivity extends BaseActivity {
     private final String TAG = "MainActivity";
-    private ListView_ScanDeviceListAdapter _ListView_deviceAdapter;
-    private Timer _Timer;
 
+    public TextView txtSDK;
+    private String[] NeedPermissions = {
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+    };
+    private boolean hasRequestPermission = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        txtSDK = findViewById(R.id.txtSDK);
+        txtSDK.setText("SDK:" + new AppInfo().Version);
 
-        if (_ListView_deviceAdapter == null) {
-            _ListView_deviceAdapter = new ListView_ScanDeviceListAdapter(this, _ListViewCallBack);
-            setListAdapter(_ListView_deviceAdapter);
+        BleManager.getInstance().init(getApplication());
+        BleManager.getInstance()
+                .enableLog(true)
+                .setReConnectCount(3, 5000)
+                .setConnectOverTime(20000)
+                .setOperateTimeout(5000);
+
+        isBluetooth4();
+    }
+
+    public void isBluetooth4() {
+        if (!BleManager.getInstance().isSupportBle()) {
+            Toast.makeText(this, "It is detected that the device does not support Bluetooth 4.0 BLE", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
         }
 
-        try {
-            BleManager.getInstance().init(getApplication());
-            BleManager.getInstance()
-                    .setReConnectCount(3, 5000)
-                    .setConnectOverTime(20000)
-                    .setOperateTimeout(5000);
-
-            if (BleManager.getInstance().isSupportBle() == false
-                    || BleManager.getInstance().isBlueEnable() == false) {
-                ShowTips("Please turn on Bluetooth!");
-                return;
-            }
-        } catch (Exception ex) {
-            Log.e(TAG, "onCreate => " + ex.toString());
+        // If the local Bluetooth is not turned on, it is turned on
+        if (!BleManager.getInstance().isBlueEnable()) {
+            // The Intent that we initiated with the startActivityForResult () method will get the user's choice in the onActivityResult () callback method, such as when the user clicks Yes,
+            // Then you will receive the result of RESULT_OK,
+            // If RESULT_CANCELED on behalf of the user does not want to turn on Bluetooth
+            Intent mIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(mIntent, 1);
+            // Use the enable () method to open, without asking the user (affordable Bluetooth device open), then you need to use android.permission.BLUETOOTH_ADMIN authority.
+            // mBluetoothAdapter.enable();
+            // mBluetoothAdapter.disable();
+        } else {
+            isOpenGPS();
         }
+    }
 
-        if (ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
-                    1);
-        }else{
-            Scan();
+    private void isOpenGPS() {
+        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        if (locationManager == null) {
+            Toast.makeText(this, "Please open on GPS!", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
         }
-
+        if (!locationManager.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER)) {
+            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivityForResult(intent, 2);
+        } else {
+            DangerousPermissions();
+        }
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case 1: {
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Scan();
-                } else {
-                }
-                return;
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // TODO Auto-generated method stub
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.i("Main", "onActivityResult: requestCode:" + requestCode + " resultCode:" + resultCode);
+        if (requestCode == 1) {
+            if (resultCode == RESULT_OK) {
+                Toast.makeText(this, "Bluetooth is on！", Toast.LENGTH_SHORT).show();
+                isOpenGPS();
+            } else if (resultCode == RESULT_CANCELED) {
+                Toast.makeText(this, "Bluetooth is not open！", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        } else if (requestCode == 2) {
+            if (resultCode == RESULT_OK) {
+                Toast.makeText(this, "GPS is on！", Toast.LENGTH_SHORT).show();
+                ToStart();
+            } else if (resultCode == RESULT_CANCELED) {
+                Toast.makeText(this, "GPS is not open！", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        } else if (requestCode == 3) {
+            DangerousPermissions();
+        }
+    }
+
+    public void DangerousPermissions() {
+        if (checkDangerousPermissions(NeedPermissions)) {
+            ToStart();
+        } else {
+            if (!hasRequestPermission) {
+                hasRequestPermission = true;
+                requestDangerousPermissions(NeedPermissions, 1);
             }
         }
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
-    public void ShowTips(String tips) {
-        try {
-            Toast toast = Toast.makeText(this, tips, Toast.LENGTH_LONG);
-            toast.setText(tips);
-            toast.show();
-        } catch (Exception ex) {
-        }
-    }
-
-
-
-    public void InitApp(){
-
-    }
-
-    /**
-     * 扫描
-     */
-    public void Scan(){
-        try {
-            if (BleManager.getInstance().getScanSate() == BleScanState.STATE_SCANNING)
-                BleManager.getInstance().cancelScan();
-            BleScanRuleConfig scanRuleConfig = new BleScanRuleConfig.Builder()
-                    .setScanTimeOut(1000 * 60)
-                    .build();
-            BleManager.getInstance().initScanRule(scanRuleConfig);
-            BleManager.getInstance().scan(DeviceScanCallback);
-
-            if (_Timer != null)
-                _Timer.cancel();
-            _Timer = new Timer();
-            TimerTask timerTask = new TimerTask() {
-                @Override
-                public void run() {
-                    try {
-                        synchronized (this) {
-                            if (BleManager.getInstance().getScanSate() == BleScanState.STATE_IDLE)
-                                BleManager.getInstance().scan(DeviceScanCallback);
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    RefreshUI();
-                                }
-                            });
-                        }
-                    } catch (Exception ex) {
-                    }
-                }
-            };
-            _Timer.schedule(timerTask, 1000, 500);
-        } catch (Exception ex) {
-            Log.e(TAG, "Scan => " + ex.toString());
-        }
-    }
-    /**
-     * 停止扫描
-     */
-    public void StopScan(){
-        try {
-            if (_Timer != null)
-                _Timer.cancel();
-            if (BleManager.getInstance().getScanSate() == BleScanState.STATE_SCANNING)
-                BleManager.getInstance().cancelScan();
-        } catch (Exception ex) {
-            Log.e(TAG, "StopScan => " + ex.toString());
-        }
-    }
-
-    public BleScanCallback DeviceScanCallback = new BleScanCallback() {
-        @Override
-        public void onScanFinished(List<BleDevice> scanResultList) {
-            Log.i(TAG, "onScanFinished => " + scanResultList.size());
-        }
-
-        @Override
-        public void onScanStarted(boolean success) {
-            Log.i(TAG, "onScanStarted => " + success);
-        }
-
-        @Override
-        public void onScanning(BleDevice bleDevice) {
-            if (bleDevice == null)
-                return;
-            Log.i(TAG, "onScanning => " + bleDevice.getMac() + " " + bleDevice.getName());
-            Scan device = new Scan();
-            if (device.fromBroadcast(bleDevice))
-                _ListView_deviceAdapter.AddOrUpdate(device);
-        }
-    };
-
-    public Date RefreshTime = new Date();
-    public boolean IsRefreshing = false;
-
-    /**
-     * Refresh UI
-     */
-    private void RefreshUI() {
-        try {
-            if (IsRefreshing)
-                return;
-
-            if (_ListView_deviceAdapter != null) {
-                Date now = new Date();
-                long t = (now.getTime() - RefreshTime.getTime());
-                IsRefreshing = true;
-                if (t > 1000) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            synchronized (this) {
-                                try {
-                                    _ListView_deviceAdapter.notifyDataSetChanged();
-                                } catch (Exception ex) {
-                                }
-                                IsRefreshing = false;
-                            }
-                        }
-                    });
-                    RefreshTime = now;
-                } else {
-                    IsRefreshing = false;
-                }
+    public boolean handlePermissionResult(int requestCode, boolean granted) {
+        if (requestCode == 1) {
+            if (!granted) {
+                Toast.makeText(this, "Permission open failed! The program exits.", Toast.LENGTH_SHORT).show();
+                finish();
+            } else {
+                ToStart();
             }
-
-        } catch (Exception ex) {
-            IsRefreshing = false;
         }
+        return super.handlePermissionResult(requestCode, granted);
+    }
+
+    public void ToStart() {
+        Timer timer = new Timer();
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(MainActivity.this, ScanActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        };
+        timer.schedule(task, 2000);
     }
 
 
-    public interface ListViewCallBack {
-        public abstract void OnSelect(Scan device);
-    }
-
-    public ListViewCallBack _ListViewCallBack = new ListViewCallBack() {
-        @Override
-        public void OnSelect(final Scan device) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    StopScan();
-
-                    Intent intent = new Intent(MainActivity.this, DeviceActivity.class);
-                    Bundle bundle = new Bundle();
-                    BaseDevice baseDevice = new BaseDevice();
-                    baseDevice.ID = device.getID();
-                    baseDevice.Name = device.getName();
-                    baseDevice.Mac = device.getMac();
-                    baseDevice.HardwareType = device.getHardwareType();
-                    baseDevice.Version = device.getVersion();
-                    intent.putExtra("d", JSON.toJSONString(baseDevice));
-                    startActivity(intent);
-                    finish();
-                }
-            });
-        }
-    };
 }

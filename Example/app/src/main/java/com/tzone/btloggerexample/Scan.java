@@ -77,7 +77,7 @@ public class Scan extends BaseDevice {
 
     public boolean fromBroadcast(BleDevice bleDevice) {
         if (super.fromBroadcast(bleDevice)) {
-            /*if (getDeviceType() == DeviceType.BT04) {
+            if (getDeviceType() == DeviceType.BT04) {
                 com.tzone.bt.bt04.Device bt04 = new com.tzone.bt.bt04.Device();
                 if (bt04.fromBroadcast(bleDevice)) {
                     this.ID = bt04.getID();
@@ -127,7 +127,7 @@ public class Scan extends BaseDevice {
                     this.LastActiveTime = new Date().getTime();
                     return true;
                 }
-            } else */
+            } else
             if (getDeviceType() == DeviceType.TempU06L60) {
                 com.tzone.bt.u06L60.Device u06 = new com.tzone.bt.u06L60.Device();
                 if (u06.fromBroadcast(bleDevice)) {

@@ -26,9 +26,9 @@ public class ListView_ScanDeviceListAdapter extends BaseAdapter {
     private Activity _Activity;
     private List<Scan> DeviceList;
     public String Key = "";
-    private MainActivity.ListViewCallBack _ListViewCallBack;
+    private ScanActivity.ListViewCallBack _ListViewCallBack;
 
-    public ListView_ScanDeviceListAdapter(Activity activity, MainActivity.ListViewCallBack callBack) {
+    public ListView_ScanDeviceListAdapter(Activity activity, ScanActivity.ListViewCallBack callBack) {
         this._Activity = activity;
         this._Inflater = activity.getLayoutInflater();
         DeviceList = new ArrayList<Scan>();

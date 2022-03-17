@@ -50,7 +50,7 @@ public class DeviceActivity extends AppCompatActivity {
         setContentView(R.layout.activity_device);
 
         txtPrintLog = (TextView)findViewById(R.id.txtPrintLog);
-        
+
         try {
             String json = this.getIntent().getExtras().getString("d");
             ShowLog("Json:" + json);
@@ -89,6 +89,8 @@ public class DeviceActivity extends AppCompatActivity {
                     _DataManager = new com.tzone.bt.bt05.DataManager();
                 else if (_Device.getDeviceType() == DeviceType.BT05B)
                     _DataManager = new com.tzone.bt.bt05b.DataManager();
+                else if (_Device.getDeviceType() == DeviceType.BT06)
+                    _DataManager = new com.tzone.bt.bt06.DataManager();
                 else {
                     return;
                 }
@@ -99,8 +101,10 @@ public class DeviceActivity extends AppCompatActivity {
 
             ShowLog("2、InitDataManager");
             if (_Device.getDeviceType() == DeviceType.TempU06L60
-                || _Device.getDeviceType() == DeviceType.TempU06L100
-                || _Device.getDeviceType() == DeviceType.TempU06L200) {
+                    || _Device.getDeviceType() == DeviceType.TempU06L80
+                    || _Device.getDeviceType() == DeviceType.TempU06L100
+                    || _Device.getDeviceType() == DeviceType.TempU06L200
+                    || _Device.getDeviceType() == DeviceType.BT06) {
                 ShowLog("3、Notify");
                 _DataManager.Notify();
             }else {
@@ -201,7 +205,7 @@ public class DeviceActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onGetAlarm(boolean status, List<AlarmSetting> alarmList) {
+        public void onGetAlarm(boolean status, List<AlarmSetting> tempAlarmList, List<AlarmSetting> rhAlarmList) {
             Log.i(TAG, "onGetAlarm: " + status);
             ShowLog("onGetAlarm: " + status);
             if(status){

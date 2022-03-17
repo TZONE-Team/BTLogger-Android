@@ -245,12 +245,12 @@ public class Report {
             }
 
             if (totalTemperature_count > 0) {
-                this.T_Average = Double.parseDouble(StringUtil.ToString(totalTemperature / totalTemperature_count, 1));
+                this.T_Average = Double.parseDouble(StringUtil.ToOneDecimal(totalTemperature / totalTemperature_count));
                 if(this.MKT == -1000)
                     this.MKT = CalcMKT();
             }
             if (totalHumidity_count > 0)
-                this.H_Average = Double.parseDouble(StringUtil.ToString(totalHumidity / totalHumidity_count, 1));
+                this.H_Average = Double.parseDouble(StringUtil.ToOneDecimal(totalHumidity / totalHumidity_count));
 
             if(this.DeviceTypeID == DeviceType.TempU06L60
                     || this.DeviceTypeID == DeviceType.TempU06L100
@@ -487,7 +487,7 @@ public class Report {
             mkt_temp = mkt_temp * 10;
             mkt_temp -= 2731;
 
-            result = Double.parseDouble(StringUtil.ToString(mkt_temp, 1));
+            result = Double.parseDouble(StringUtil.ToOneDecimal(mkt_temp));
         } catch (Exception ex) {
         }
         return result;

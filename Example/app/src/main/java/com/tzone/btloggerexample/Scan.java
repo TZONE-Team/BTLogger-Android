@@ -52,7 +52,7 @@ public class Scan extends BaseDevice {
      * 2 = Low temperature alarm
      * 3 = Upper and lower temperature alarm
      */
-    private int AlarmStatus;
+    private int[] AlarmStatus;
     /**
      * Device status
      * i = 0,Whether the USB is inserted
@@ -70,7 +70,7 @@ public class Scan extends BaseDevice {
         this.Humidity = -1000;
         this.Locklevel = -1;
         this.RecordStatus = DeviceRecordType.Initialize;
-        this.AlarmStatus = -1;
+        this.AlarmStatus = new int[]{-1, -1};
         this.DeviceStatus = new int[]{-1, -1};
         this.LastActiveTime = 0;
     }
@@ -85,7 +85,8 @@ public class Scan extends BaseDevice {
                     this.Temperature = bt04.getTemperature();
                     this.Humidity = bt04.getHumidity();
                     this.Battery = bt04.getBattery();
-                    this.RecordStatus = DeviceRecordType.Recording;
+                    this.RecordStatus = DeviceRecordType.Unknown;
+                    this.AlarmStatus = bt04.getAlarmStatus();
                     this.Version = bt04.getVersion();
                     this.LastActiveTime = new Date().getTime();
                     return true;
@@ -98,7 +99,8 @@ public class Scan extends BaseDevice {
                     this.Temperature = bt04b.getTemperature();
                     this.Humidity = bt04b.getHumidity();
                     this.Battery = bt04b.getBattery();
-                    this.RecordStatus = DeviceRecordType.Recording;
+                    this.RecordStatus = DeviceRecordType.Unknown;
+                    this.AlarmStatus = bt04b.getAlarmStatus();
                     this.Version = bt04b.getVersion();
                     this.LastActiveTime = new Date().getTime();
                     return true;
@@ -110,7 +112,8 @@ public class Scan extends BaseDevice {
                     this.Name = bt05.getName();
                     this.Temperature = bt05.getTemperature();
                     this.Battery = bt05.getBattery();
-                    this.RecordStatus = DeviceRecordType.Recording;
+                    this.RecordStatus = DeviceRecordType.Unknown;
+                    this.AlarmStatus = bt05.getAlarmStatus();
                     this.Version = bt05.getVersion();
                     this.LastActiveTime = new Date().getTime();
                     return true;
@@ -122,14 +125,31 @@ public class Scan extends BaseDevice {
                     this.Name = bt05b.getName();
                     this.Temperature = bt05b.getTemperature();
                     this.Battery = bt05b.getBattery();
-                    this.RecordStatus = DeviceRecordType.Recording;
+                    this.RecordStatus = DeviceRecordType.Unknown;
+                    this.AlarmStatus = bt05b.getAlarmStatus();
                     this.Version = bt05b.getVersion();
                     this.LastActiveTime = new Date().getTime();
                     return true;
                 }
-            } else
-            if (getDeviceType() == DeviceType.TempU06L60) {
+            } else if (getDeviceType() == DeviceType.TempU06L60) {
                 com.tzone.bt.u06L60.Device u06 = new com.tzone.bt.u06L60.Device();
+                if (u06.fromBroadcast(bleDevice)) {
+                    this.ID = u06.getID();
+                    this.Name = u06.getName();
+                    this.Voltage = u06.getVoltage();
+                    this.TemperatureUnitTypeID = u06.getTemperatureUnitTypeID();
+                    this.Temperature = u06.getTemperature();
+                    this.Humidity = u06.getHumidity();
+                    this.Locklevel = u06.getLocklevel();
+                    this.RecordStatus = u06.getRecordStatus();
+                    this.AlarmStatus = u06.getAlarmStatus();
+                    this.DeviceStatus = new int[]{u06.getUSBPlugIn() ? 1 : 0, u06.getDataFull() ? 1 : 0};
+                    this.Version = u06.getVersion();
+                    this.LastActiveTime = new Date().getTime();
+                    return true;
+                }
+            }else if (getDeviceType() == DeviceType.TempU06L80) {
+                com.tzone.bt.u06L80.Device u06 = new com.tzone.bt.u06L80.Device();
                 if (u06.fromBroadcast(bleDevice)) {
                     this.ID = u06.getID();
                     this.Name = u06.getName();
@@ -179,6 +199,23 @@ public class Scan extends BaseDevice {
                     this.LastActiveTime = new Date().getTime();
                     return true;
                 }
+            }else if (getDeviceType() == DeviceType.BT06) {
+                com.tzone.bt.bt06.Device bt06 = new com.tzone.bt.bt06.Device();
+                if (bt06.fromBroadcast(bleDevice)) {
+                    this.ID = bt06.getID();
+                    this.Name = bt06.getName();
+                    this.Voltage = bt06.getVoltage();
+                    this.TemperatureUnitTypeID = bt06.getTemperatureUnitTypeID();
+                    this.Temperature = bt06.getTemperature();
+                    this.Humidity = bt06.getHumidity();
+                    this.Locklevel = bt06.getLocklevel();
+                    this.RecordStatus = bt06.getRecordStatus();
+                    this.AlarmStatus = bt06.getAlarmStatus();
+                    this.DeviceStatus = new int[]{ 0, bt06.getDataFull() ? 1 : 0};
+                    this.Version = bt06.getVersion();
+                    this.LastActiveTime = new Date().getTime();
+                    return true;
+                }
             }
 
         }
@@ -208,6 +245,46 @@ public class Scan extends BaseDevice {
     public int getBattery() {
         return Battery;
     }
+    public int getBatteryBar() {
+        if (this.getDeviceType() == DeviceType.TempU06L60
+                || this.getDeviceType() == DeviceType.TempU06L80
+                || this.getDeviceType() == DeviceType.TempU06L100
+                || this.getDeviceType() == DeviceType.TempU06L200) {
+            if (this.getVoltage() != -1000) {
+                if (this.getVoltage() > 3.55)
+                    return 4;
+                else if (this.getVoltage() > 3.4)
+                    return 3;
+                else if (this.getVoltage() > 3.2)
+                    return 2;
+                else
+                    return 1;
+            }
+        } else if (this.getDeviceType() == DeviceType.BT06) {
+            if (this.getVoltage() != -1000) {
+                if (this.getVoltage() >= 2.8)
+                    return 4;
+                else if (this.getVoltage() >= 2.7)
+                    return 3;
+                else if (this.getVoltage() >= 2.55)
+                    return 2;
+                else
+                    return 1;
+            }
+        } else {
+            if (this.getBattery() != -1000) {
+                if (this.getBattery() > 85)
+                    return 4;
+                else if (this.getBattery() > 65)
+                    return 3;
+                else if (this.getBattery() > 35)
+                    return 2;
+                else
+                    return 1;
+            }
+        }
+        return 4;
+    }
 
     public TemperatureUnitType getTemperatureUnitTypeID() {
         return TemperatureUnitTypeID;
@@ -231,7 +308,7 @@ public class Scan extends BaseDevice {
         return RecordStatus;
     }
 
-    public int getAlarmStatus() {
+    public int[] getAlarmStatus() {
         return AlarmStatus;
     }
 

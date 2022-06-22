@@ -1,2 +1,2 @@
 # BTLogger-Android
-BT04、BT04B、BT05、BT05B、TempU06+ Android APP
+BT04、BT04B、BT05、BT05B、BT06、TempU06+ Android APP

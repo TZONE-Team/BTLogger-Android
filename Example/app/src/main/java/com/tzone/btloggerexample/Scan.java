@@ -3,10 +3,10 @@ package com.tzone.btloggerexample;
 import android.util.Log;
 
 import com.tzone.bluetooth.data.BleDevice;
-import com.tzone.bt.BaseDevice;
-import com.tzone.bt.DeviceRecordType;
-import com.tzone.bt.DeviceType;
-import com.tzone.bt.TemperatureUnitType;
+import com.tzone.devices.BaseDevice;
+import com.tzone.devices.DeviceRecordType;
+import com.tzone.devices.DeviceType;
+import com.tzone.devices.TemperatureUnitType;
 
 import java.util.Date;
 
@@ -78,7 +78,7 @@ public class Scan extends BaseDevice {
     public boolean fromBroadcast(BleDevice bleDevice) {
         if (super.fromBroadcast(bleDevice)) {
             if (getDeviceType() == DeviceType.BT04) {
-                com.tzone.bt.bt04.Device bt04 = new com.tzone.bt.bt04.Device();
+                com.tzone.devices.bt04.Device bt04 = new com.tzone.devices.bt04.Device();
                 if (bt04.fromBroadcast(bleDevice)) {
                     this.ID = bt04.getID();
                     this.Name = bt04.getName();
@@ -92,7 +92,7 @@ public class Scan extends BaseDevice {
                     return true;
                 }
             } else if (getDeviceType() == DeviceType.BT04B) {
-                com.tzone.bt.bt04b.Device bt04b = new com.tzone.bt.bt04b.Device();
+                com.tzone.devices.bt04b.Device bt04b = new com.tzone.devices.bt04b.Device();
                 if (bt04b.fromBroadcast(bleDevice)) {
                     this.ID = bt04b.getID();
                     this.Name = bt04b.getName();
@@ -106,7 +106,7 @@ public class Scan extends BaseDevice {
                     return true;
                 }
             } else if (getDeviceType() == DeviceType.BT05) {
-                com.tzone.bt.bt05.Device bt05 = new com.tzone.bt.bt05.Device();
+                com.tzone.devices.bt05.Device bt05 = new com.tzone.devices.bt05.Device();
                 if (bt05.fromBroadcast(bleDevice)) {
                     this.ID = bt05.getID();
                     this.Name = bt05.getName();
@@ -119,7 +119,7 @@ public class Scan extends BaseDevice {
                     return true;
                 }
             } else if (getDeviceType() == DeviceType.BT05B) {
-                com.tzone.bt.bt05b.Device bt05b = new com.tzone.bt.bt05b.Device();
+                com.tzone.devices.bt05b.Device bt05b = new com.tzone.devices.bt05b.Device();
                 if (bt05b.fromBroadcast(bleDevice)) {
                     this.ID = bt05b.getID();
                     this.Name = bt05b.getName();
@@ -132,7 +132,7 @@ public class Scan extends BaseDevice {
                     return true;
                 }
             } else if (getDeviceType() == DeviceType.TempU06L60) {
-                com.tzone.bt.u06L60.Device u06 = new com.tzone.bt.u06L60.Device();
+                com.tzone.devices.u06L60.Device u06 = new com.tzone.devices.u06L60.Device();
                 if (u06.fromBroadcast(bleDevice)) {
                     this.ID = u06.getID();
                     this.Name = u06.getName();
@@ -149,7 +149,7 @@ public class Scan extends BaseDevice {
                     return true;
                 }
             }else if (getDeviceType() == DeviceType.TempU06L80) {
-                com.tzone.bt.u06L80.Device u06 = new com.tzone.bt.u06L80.Device();
+                com.tzone.devices.u06L80.Device u06 = new com.tzone.devices.u06L80.Device();
                 if (u06.fromBroadcast(bleDevice)) {
                     this.ID = u06.getID();
                     this.Name = u06.getName();
@@ -166,7 +166,7 @@ public class Scan extends BaseDevice {
                     return true;
                 }
             }else if (getDeviceType() == DeviceType.TempU06L100) {
-                com.tzone.bt.u06L100.Device u06 = new com.tzone.bt.u06L100.Device();
+                com.tzone.devices.u06L100.Device u06 = new com.tzone.devices.u06L100.Device();
                 if (u06.fromBroadcast(bleDevice)) {
                     this.ID = u06.getID();
                     this.Name = u06.getName();
@@ -183,7 +183,7 @@ public class Scan extends BaseDevice {
                     return true;
                 }
             }else if (getDeviceType() == DeviceType.TempU06L200) {
-                com.tzone.bt.u06L200.Device u06 = new com.tzone.bt.u06L200.Device();
+                com.tzone.devices.u06L200.Device u06 = new com.tzone.devices.u06L200.Device();
                 if (u06.fromBroadcast(bleDevice)) {
                     this.ID = u06.getID();
                     this.Name = u06.getName();
@@ -200,7 +200,7 @@ public class Scan extends BaseDevice {
                     return true;
                 }
             }else if (getDeviceType() == DeviceType.BT06) {
-                com.tzone.bt.bt06.Device bt06 = new com.tzone.bt.bt06.Device();
+                com.tzone.devices.bt06.Device bt06 = new com.tzone.devices.bt06.Device();
                 if (bt06.fromBroadcast(bleDevice)) {
                     this.ID = bt06.getID();
                     this.Name = bt06.getName();

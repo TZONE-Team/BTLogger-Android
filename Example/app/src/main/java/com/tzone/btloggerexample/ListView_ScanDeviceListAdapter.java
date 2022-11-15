@@ -13,8 +13,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.tzone.bt.DeviceRecordType;
-import com.tzone.bt.DeviceType;
+import com.tzone.devices.DeviceRecordType;
+import com.tzone.devices.DeviceType;
 import com.tzone.utils.StringUtil;
 
 import java.util.ArrayList;

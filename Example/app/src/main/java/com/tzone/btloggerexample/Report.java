@@ -2,12 +2,12 @@ package com.tzone.btloggerexample;
 
 import android.util.Log;
 
-import com.tzone.bt.AlarmSetting;
-import com.tzone.bt.BaseDevice;
-import com.tzone.bt.DeviceRecordType;
-import com.tzone.bt.DeviceType;
-import com.tzone.bt.LoggingData;
-import com.tzone.bt.TemperatureUnitType;
+import com.tzone.devices.AlarmSetting;
+import com.tzone.devices.BaseDevice;
+import com.tzone.devices.DeviceRecordType;
+import com.tzone.devices.DeviceType;
+import com.tzone.devices.LoggingData;
+import com.tzone.devices.TemperatureUnitType;
 import com.tzone.utils.StringUtil;
 
 import java.util.ArrayList;

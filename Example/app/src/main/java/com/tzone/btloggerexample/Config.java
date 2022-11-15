@@ -1,7 +1,7 @@
 package com.tzone.btloggerexample;
 
-import com.tzone.bt.AlarmSetting;
-import com.tzone.bt.TemperatureUnitType;
+import com.tzone.devices.AlarmSetting;
+import com.tzone.devices.TemperatureUnitType;
 
 import java.util.List;
 

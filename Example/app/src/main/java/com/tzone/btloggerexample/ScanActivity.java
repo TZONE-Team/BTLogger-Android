@@ -15,7 +15,7 @@ import com.tzone.bluetooth.callback.BleScanCallback;
 import com.tzone.bluetooth.data.BleDevice;
 import com.tzone.bluetooth.data.BleScanState;
 import com.tzone.bluetooth.scan.BleScanRuleConfig;
-import com.tzone.bt.BaseDevice;
+import com.tzone.devices.BaseDevice;
 
 import java.util.Date;
 import java.util.List;

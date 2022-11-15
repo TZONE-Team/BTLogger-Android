@@ -16,15 +16,14 @@ import com.tzone.bluetooth.callback.BleGattCallback;
 import com.tzone.bluetooth.callback.BleScanCallback;
 import com.tzone.bluetooth.data.BleDevice;
 import com.tzone.bluetooth.exception.BleException;
-import com.tzone.bt.AlarmSetting;
-import com.tzone.bt.BaseDevice;
-import com.tzone.bt.DataManagerBase;
-import com.tzone.bt.DeviceRecordType;
-import com.tzone.bt.DeviceType;
-import com.tzone.bt.IDataCallback;
-import com.tzone.bt.LoggingData;
-import com.tzone.bt.TemperatureUnitType;
-import com.tzone.bt.u06.Device;
+import com.tzone.devices.AlarmSetting;
+import com.tzone.devices.BaseDevice;
+import com.tzone.devices.DataManagerBase;
+import com.tzone.devices.DeviceRecordType;
+import com.tzone.devices.DeviceType;
+import com.tzone.devices.IDataCallback;
+import com.tzone.devices.LoggingData;
+import com.tzone.devices.TemperatureUnitType;
 import com.tzone.utils.StringUtil;
 
 import java.util.Date;
@@ -76,25 +75,25 @@ public class DeviceActivity extends AppCompatActivity {
         try {
             if (_DataManager == null) {
                 if (_Device.getDeviceType() == DeviceType.TempU06L60)
-                    _DataManager = new com.tzone.bt.u06L60.DataManager();
+                    _DataManager = new com.tzone.devices.u06L60.DataManager();
                 else if (_Device.getDeviceType() == DeviceType.TempU06L100)
-                    _DataManager = new com.tzone.bt.u06L100.DataManager();
+                    _DataManager = new com.tzone.devices.u06L100.DataManager();
                 else if (_Device.getDeviceType() == DeviceType.TempU06L200)
-                    _DataManager = new com.tzone.bt.u06L200.DataManager();
+                    _DataManager = new com.tzone.devices.u06L200.DataManager();
                 else if (_Device.getDeviceType() == DeviceType.BT04)
-                    _DataManager = new com.tzone.bt.bt04.DataManager();
+                    _DataManager = new com.tzone.devices.bt04.DataManager();
                 else if (_Device.getDeviceType() == DeviceType.BT04B)
-                    _DataManager = new com.tzone.bt.bt04b.DataManager();
+                    _DataManager = new com.tzone.devices.bt04b.DataManager();
                 else if (_Device.getDeviceType() == DeviceType.BT05)
-                    _DataManager = new com.tzone.bt.bt05.DataManager();
+                    _DataManager = new com.tzone.devices.bt05.DataManager();
                 else if (_Device.getDeviceType() == DeviceType.BT05B)
-                    _DataManager = new com.tzone.bt.bt05b.DataManager();
+                    _DataManager = new com.tzone.devices.bt05b.DataManager();
                 else if (_Device.getDeviceType() == DeviceType.BT06)
-                    _DataManager = new com.tzone.bt.bt06.DataManager();
+                    _DataManager = new com.tzone.devices.bt06.DataManager();
                 else {
                     return;
                 }
-                _DataManager.InitSetting(_BleDevice, dataCallback);
+                _DataManager.Initialize(_BleDevice, dataCallback);
             }
 
             _Report = null;
@@ -303,6 +302,11 @@ public class DeviceActivity extends AppCompatActivity {
 
         @Override
         public void onMark(boolean status) {
+
+        }
+
+        @Override
+        public void onClearFlash(boolean b) {
 
         }
     };

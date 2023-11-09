@@ -13,7 +13,6 @@ import android.widget.TextView;
 import com.alibaba.fastjson.JSON;
 import com.tzone.bluetooth.BleManager;
 import com.tzone.bluetooth.callback.BleGattCallback;
-import com.tzone.bluetooth.callback.BleScanCallback;
 import com.tzone.bluetooth.data.BleDevice;
 import com.tzone.bluetooth.exception.BleException;
 import com.tzone.devices.AlarmSetting;
@@ -90,6 +89,10 @@ public class DeviceActivity extends AppCompatActivity {
                     _DataManager = new com.tzone.devices.bt05b.DataManager();
                 else if (_Device.getDeviceType() == DeviceType.BT06)
                     _DataManager = new com.tzone.devices.bt06.DataManager();
+                else if (_Device.getDeviceType() == DeviceType.BT03)
+                    _DataManager = new com.tzone.devices.bt03.DataManager();
+                else if (_Device.getDeviceType() == DeviceType.BT07)
+                    _DataManager = new com.tzone.devices.bt07.DataManager();
                 else {
                     return;
                 }
@@ -103,7 +106,9 @@ public class DeviceActivity extends AppCompatActivity {
                     || _Device.getDeviceType() == DeviceType.TempU06L80
                     || _Device.getDeviceType() == DeviceType.TempU06L100
                     || _Device.getDeviceType() == DeviceType.TempU06L200
-                    || _Device.getDeviceType() == DeviceType.BT06) {
+                    || _Device.getDeviceType() == DeviceType.BT06
+                    || _Device.getDeviceType() == DeviceType.BT03
+                    || _Device.getDeviceType() == DeviceType.BT07) {
                 ShowLog("3、Notify");
                 _DataManager.Notify();
             }else {
